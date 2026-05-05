@@ -3,20 +3,19 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 
-/*
- ESWA03CalculadoraDeMedias -------------------------------------------------------------------------------------------
-Danilo Oliveira (R660648)
+/* Integrantes do projetinho ---------------------------------------
+ Danilo Oliveira (R660648) - Líder
 Eduardo Juan (R590AJ8)
 Adriano Junior (H7451E8)
 João Acerbi (R855DD4)
 Rafael Botti (R8497A1)
  */
-// ----------------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------
+
 namespace CalculadoraUniversitariaSimples
 {
     static class Program
     {
-        [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
@@ -26,7 +25,7 @@ namespace CalculadoraUniversitariaSimples
     }
 
     public class FormSimples : Form
-    {  
+    {
         private GroupBox grpSemestre;
         private TextBox txtNP1, txtNP2, txtPIM;
         private Label lblResultadoMS;
@@ -40,6 +39,7 @@ namespace CalculadoraUniversitariaSimples
         private Label lblStatusGeral;
         private double mediaSemestral = 0;
 
+        // Cores para estilizar --------------------------------------------------------------------------------------------------
         private Color corAzul = Color.FromArgb(13, 110, 253);
         private Color corCinza = Color.FromArgb(108, 117, 125);
         private Color corVerde = Color.FromArgb(25, 135, 84);
@@ -61,7 +61,7 @@ namespace CalculadoraUniversitariaSimples
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
 
-            // Título do Aplicativo ----------------------------------------------------------------------------------
+            // Título --------------------------------------------------------------------
             Label lblTitulo = new Label
             {
                 Text = "CÁLCULO DE MÉDIAS",
@@ -74,6 +74,7 @@ namespace CalculadoraUniversitariaSimples
             };
             this.Controls.Add(lblTitulo);
 
+            // SEMESTRE ------------------------------------------------------------------
             grpSemestre = new GroupBox { Text = " 1. Média Semestral ", Bounds = new Rectangle(20, 70, 320, 200), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
             this.Controls.Add(grpSemestre);
 
@@ -90,7 +91,7 @@ namespace CalculadoraUniversitariaSimples
             lblResultadoMS = new Label { Text = "-", Bounds = new Rectangle(215, 145, 95, 35), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
             grpSemestre.Controls.Add(lblResultadoMS);
 
-            //Exame -----------------------------------------------------------------------------------------------------------------
+            // EXAME ------------------------------------------------------------------
             grpExame = new GroupBox { Text = " 2. Exame Final ", Bounds = new Rectangle(20, 280, 320, 160), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
             this.Controls.Add(grpExame);
 
@@ -108,12 +109,13 @@ namespace CalculadoraUniversitariaSimples
             lblResultadoFinal = new Label { Text = "-", Bounds = new Rectangle(215, 105, 95, 35), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
             grpExame.Controls.Add(lblResultadoFinal);
 
-            // status do apk
+            // STATUS GERAL -----------------------------------------------------------
             lblStatusGeral = new Label { Text = "Status: Em Andamento", Bounds = new Rectangle(20, 460, 320, 25), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
             this.Controls.Add(lblStatusGeral);
         }
 
-        // calculos e formulas -------------------------------------------------------------------------------------------------------
+
+        // CÁLCULOS --------------------------------------------------------------------
         private void CalcularSemestre()
         {
             double np1 = LerNumero(txtNP1);
@@ -161,11 +163,11 @@ namespace CalculadoraUniversitariaSimples
             }
         }
 
-    
-
+        // BOTÕES DE LIMPAR --------------------------------------------------------------
         private void ResetarGeralApp()
         {
             txtNP1.Clear(); txtNP2.Clear(); txtPIM.Clear(); txtExame.Clear();
+
             mediaSemestral = 0;
             lblResultadoMS.Text = "-";
             lblResultadoFinal.Text = "-";
@@ -198,7 +200,7 @@ namespace CalculadoraUniversitariaSimples
         }
 
 
-        //utilidades ---------------------------------------------------------------------------------------------------------
+        // organização ----------------------------------------------------------
         private void MudarStatusUI(Label ResultText, Label GlobalStateText, Color colorApply, string valueRs, string textSt)
         {
             ResultText.Text = valueRs; GlobalStateText.Text = textSt;
