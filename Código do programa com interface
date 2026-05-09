@@ -5,26 +5,16 @@ using System.Windows.Forms;
 
 /* Integrantes do projetinho ---------------------------------------
  Danilo Oliveira (R660648) - Líder
-Eduardo Juan (R590AJ8)
-Adriano Junior (H7451E8)
-João Acerbi (R855DD4)
-Rafael Botti (R8497A1)
+ Eduardo Juan (R590AJ8)
+ Adriano Junior (H7451E8)
+ João Acerbi (R855DD4)
+ Rafael Botti (R8497A1)
  */
 // ------------------------------------------------------------------
 
-namespace CalculadoraUniversitariaSimples
+namespace ESWA03Calculadora_De_MediasV1
 {
-    static class Program
-    {
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormSimples());
-        }
-    }
-
-    public class FormSimples : Form
+    public partial class Form1 : Form
     {
         private GroupBox grpSemestre;
         private TextBox txtNP1, txtNP2, txtPIM;
@@ -45,7 +35,7 @@ namespace CalculadoraUniversitariaSimples
         private Color corVerde = Color.FromArgb(25, 135, 84);
         private Color corVermelho = Color.FromArgb(220, 53, 69);
 
-        public FormSimples()
+        public Form1()
         {
             ConstruirInterface();
             ResetarGeralApp();
@@ -242,5 +232,19 @@ namespace CalculadoraUniversitariaSimples
             pnControl.Controls.Add(basebutton);
             return basebutton;
         }
+
+        static class Program
+        {
+            [STAThread]
+            static void Main()
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new Form1());
+            }
+        }
+
     }
 }
+
+   
