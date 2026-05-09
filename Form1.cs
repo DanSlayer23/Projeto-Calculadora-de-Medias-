@@ -1,0 +1,250 @@
+using System;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+
+/* Integrantes do projetinho ---------------------------------------
+ Danilo Oliveira (R660648) - Líder
+ Eduardo Juan (R590AJ8)
+ Adriano Junior (H7451E8)
+ João Acerbi (R855DD4)
+ Rafael Botti (R8497A1)
+ */
+// ------------------------------------------------------------------
+
+namespace ESWA03Calculadora_De_MediasV1
+{
+    public partial class Form1 : Form
+    {
+        private GroupBox grpSemestre;
+        private TextBox txtNP1, txtNP2, txtPIM;
+        private Label lblResultadoMS;
+        private Button btnCalcularSemestre, btnLimparSemestre;
+
+        private GroupBox grpExame;
+        private TextBox txtExame;
+        private Label lblNecessario, lblResultadoFinal;
+        private Button btnCalcularExame, btnLimparExame;
+
+        private Label lblStatusGeral;
+        private double mediaSemestral = 0;
+
+        // Cores para estilizar --------------------------------------------------------------------------------------------------
+        private Color corAzul = Color.FromArgb(13, 110, 253);
+        private Color corCinza = Color.FromArgb(108, 117, 125);
+        private Color corVerde = Color.FromArgb(25, 135, 84);
+        private Color corVermelho = Color.FromArgb(220, 53, 69);
+
+        public Form1()
+        {
+            ConstruirInterface();
+            ResetarGeralApp();
+        }
+
+        private void ConstruirInterface()
+        {
+            this.Text = "Calculadora de Notas";
+            this.Size = new Size(380, 540);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.White;
+            this.Font = new Font("Segoe UI", 10f);
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+
+            // Título --------------------------------------------------------------------
+            Label lblTitulo = new Label
+            {
+                Text = "CÁLCULO DE MÉDIAS",
+                Dock = DockStyle.Top,
+                Height = 50,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                BackColor = corAzul,
+                ForeColor = Color.White
+            };
+            this.Controls.Add(lblTitulo);
+
+            // SEMESTRE ------------------------------------------------------------------
+            grpSemestre = new GroupBox { Text = " 1. Média Semestral ", Bounds = new Rectangle(20, 70, 320, 200), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            this.Controls.Add(grpSemestre);
+
+            txtNP1 = CriarInput(grpSemestre, "NP1 (Peso 4):", 20, 35);
+            txtNP2 = CriarInput(grpSemestre, "NP2 (Peso 4):", 20, 70);
+            txtPIM = CriarInput(grpSemestre, "PIM (Peso 2):", 20, 105);
+
+            btnCalcularSemestre = CriarBotao(grpSemestre, "Calcular", corAzul, 15, 145, 100, 35);
+            btnCalcularSemestre.Click += (s, e) => CalcularSemestre();
+
+            btnLimparSemestre = CriarBotao(grpSemestre, "Limpar", corCinza, 120, 145, 90, 35);
+            btnLimparSemestre.Click += (s, e) => ResetarGeralApp();
+
+            lblResultadoMS = new Label { Text = "-", Bounds = new Rectangle(215, 145, 95, 35), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
+            grpSemestre.Controls.Add(lblResultadoMS);
+
+            // EXAME ------------------------------------------------------------------
+            grpExame = new GroupBox { Text = " 2. Exame Final ", Bounds = new Rectangle(20, 280, 320, 160), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            this.Controls.Add(grpExame);
+
+            lblNecessario = new Label { Text = "Você precisa tirar: -", Bounds = new Rectangle(20, 30, 280, 20), ForeColor = corCinza, Font = new Font("Segoe UI", 9, FontStyle.Regular) };
+            grpExame.Controls.Add(lblNecessario);
+
+            txtExame = CriarInput(grpExame, "Nota do Exame:", 20, 60);
+
+            btnCalcularExame = CriarBotao(grpExame, "Calcular", corAzul, 15, 105, 100, 35);
+            btnCalcularExame.Click += (s, e) => CalcularExame();
+
+            btnLimparExame = CriarBotao(grpExame, "Limpar", corCinza, 120, 105, 90, 35);
+            btnLimparExame.Click += (s, e) => ResetarApenasExame();
+
+            lblResultadoFinal = new Label { Text = "-", Bounds = new Rectangle(215, 105, 95, 35), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 16, FontStyle.Bold) };
+            grpExame.Controls.Add(lblResultadoFinal);
+
+            // STATUS GERAL -----------------------------------------------------------
+            lblStatusGeral = new Label { Text = "Status: Em Andamento", Bounds = new Rectangle(20, 460, 320, 25), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
+            this.Controls.Add(lblStatusGeral);
+        }
+
+
+        // CÁLCULOS --------------------------------------------------------------------
+        private void CalcularSemestre()
+        {
+            double np1 = LerNumero(txtNP1);
+            double np2 = LerNumero(txtNP2);
+            double pim = LerNumero(txtPIM);
+            if (np1 < 0 || np2 < 0 || pim < 0) return;
+
+            mediaSemestral = Math.Round(((4 * np1) + (4 * np2) + (2 * pim)) / 10, 1, MidpointRounding.AwayFromZero);
+
+            btnLimparSemestre.Enabled = true;
+
+            if (mediaSemestral >= 7.0)
+            {
+                MudarStatusUI(lblResultadoMS, lblStatusGeral, corVerde, $"{mediaSemestral:0.0}", "Status: Aprovado Direto!");
+                grpExame.Enabled = false;
+            }
+            else
+            {
+                MudarStatusUI(lblResultadoMS, lblStatusGeral, corVermelho, $"{mediaSemestral:0.0}", "Status: Faltam notas / Exame");
+
+                grpExame.Enabled = true;
+                btnCalcularExame.Enabled = true;
+
+                double precisa = 10.0 - mediaSemestral;
+                lblNecessario.Text = $"Você precisa tirar no mínimo: {precisa:0.0}";
+                txtExame.Focus();
+            }
+        }
+
+        private void CalcularExame()
+        {
+            double exame = LerNumero(txtExame);
+            if (exame < 0) return;
+
+            double mf = Math.Round((mediaSemestral + exame) / 2, 1, MidpointRounding.AwayFromZero);
+            btnLimparExame.Enabled = true;
+
+            if (mf >= 5.0)
+            {
+                MudarStatusUI(lblResultadoFinal, lblStatusGeral, corVerde, $"{mf:0.0}", "Status: Aprovado no Exame!");
+            }
+            else
+            {
+                MudarStatusUI(lblResultadoFinal, lblStatusGeral, corVermelho, $"{mf:0.0}", "Status: Reprovado na Final.");
+            }
+        }
+
+        // BOTÕES DE LIMPAR --------------------------------------------------------------
+        private void ResetarGeralApp()
+        {
+            txtNP1.Clear(); txtNP2.Clear(); txtPIM.Clear(); txtExame.Clear();
+
+            mediaSemestral = 0;
+            lblResultadoMS.Text = "-";
+            lblResultadoFinal.Text = "-";
+            lblNecessario.Text = "Você precisa tirar: -";
+
+            lblStatusGeral.Text = "Status: Em Andamento";
+
+            lblStatusGeral.ForeColor = Color.Black;
+            lblResultadoMS.ForeColor = Color.Black;
+            lblResultadoFinal.ForeColor = Color.Black;
+
+            btnLimparSemestre.Enabled = false;
+            btnLimparExame.Enabled = false;
+            btnCalcularExame.Enabled = false;
+
+            grpExame.Enabled = false;
+            txtNP1.Focus();
+        }
+
+        private void ResetarApenasExame()
+        {
+            txtExame.Clear();
+            lblResultadoFinal.Text = "-";
+            lblResultadoFinal.ForeColor = Color.Black;
+
+            lblStatusGeral.Text = "Status: Refaça seu Cálculo de Exame";
+            lblStatusGeral.ForeColor = corCinza;
+            btnLimparExame.Enabled = false;
+            txtExame.Focus();
+        }
+
+
+        // organização ----------------------------------------------------------
+        private void MudarStatusUI(Label ResultText, Label GlobalStateText, Color colorApply, string valueRs, string textSt)
+        {
+            ResultText.Text = valueRs; GlobalStateText.Text = textSt;
+            ResultText.ForeColor = GlobalStateText.ForeColor = colorApply;
+        }
+
+        private double LerNumero(TextBox txt)
+        {
+            if (string.IsNullOrWhiteSpace(txt.Text)) return 0;
+            string txtSubstitutoDecimal = txt.Text.Replace(",", ".");
+            if (double.TryParse(txtSubstitutoDecimal, NumberStyles.Any, CultureInfo.InvariantCulture, out double valor) && valor >= 0 && valor <= 10) return valor;
+
+            MessageBox.Show("Você forneceu informações incompatíveis, verifique se está num limite de zero a 10.", "Ops...", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return -1;
+        }
+
+        private TextBox CriarInput(Control parente, string lblNome, int eX, int eY)
+        {
+            Label lblTemp = new Label { Text = lblNome, Bounds = new Rectangle(eX, eY + 2, 100, 20), Font = new Font("Segoe UI", 10) };
+            TextBox tmpT = new TextBox { Bounds = new Rectangle(eX + 105, eY, 60, 25), TextAlign = HorizontalAlignment.Center, Font = new Font("Segoe UI", 11) };
+            parente.Controls.Add(lblTemp);
+            parente.Controls.Add(tmpT);
+            return tmpT;
+        }
+
+        private Button CriarBotao(Control pnControl, string nomebt, Color BackBtn, int rX, int rY, int CmpB, int AltB)
+        {
+            Button basebutton = new Button
+            {
+                Text = nomebt,
+                Bounds = new Rectangle(rX, rY, CmpB, AltB),
+                BackColor = BackBtn,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Font = new Font("Segoe UI", 9.5f, FontStyle.Bold)
+            };
+            basebutton.FlatAppearance.BorderSize = 0;
+            pnControl.Controls.Add(basebutton);
+            return basebutton;
+        }
+
+        static class Program
+        {
+            [STAThread]
+            static void Main()
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new Form1());
+            }
+        }
+
+    }
+}
+
+   
